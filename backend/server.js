@@ -1,69 +1,31 @@
-// server.js
-require("dotenv").config();
 const express = require("express");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const cors = require("cors");
+require("dotenv").config();
 const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+
+const authRoutes = require("./routes/authRoutes");
+
 const app = express();
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log("Connected to MongoDB");
-    console.log(
-      "Connection string:",
-      process.env.MONGODB_URI.replace(/:\/\/[^:]+:[^@]+@/, "://****:****@")
-    ); // Safely log the connection string
-    console.log("Database name:", mongoose.connection.name);
-  })
-  .catch((err) => {
-    console.error("MongoDB connection error:");
-    console.error("Error name:", err.name);
-    console.error("Error message:", err.message);
-    console.error("Full error:", err);
-  });
+mongoose.connect(process.env.DB_URI);
 
-// Apply security middleware
-app.use(helmet());
-
-// Enable CORS with specific options
 let corsOptions = {
-  origin: process.env.ORIGIN,
+  origin: "http://localhost:3000",
   methods: "GET,PUT,POST,DELETE",
   credentials: true,
 };
 
 app.use(cors(corsOptions));
 
-// Rate limiting to prevent brute-force attacks
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
-
-// Parse JSON bodies
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cookieParser());
 
-// Mount authentication and account routes
-const authRoutes = require("./routes/authRoutes");
-const accountRoutes = require("./routes/accountRoutes");
-app.use("/auth", authRoutes);
-app.use("/api/account", accountRoutes);
+app.use("/api/auth", authRoutes);
 
-// Global error handler middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: "Something went wrong!" });
+app.get("/", (req, res) => {
+  res.send(`Server running on port ${process.env.PORT}`);
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(process.env.PORT);
