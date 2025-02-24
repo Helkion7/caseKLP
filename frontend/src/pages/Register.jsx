@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import axios from "axios";
 
@@ -7,18 +8,19 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [accountType, setAccountType] = useState("checking");
 
   const [msg, setMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/auth/register`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
         { name, email, password, repeatPassword },
         {
           withCredentials: true,
@@ -28,6 +30,11 @@ const Register = () => {
 
       console.log(response.data, "RESPONSE DATA");
       setMsg(response.data.msg);
+
+      // Redirect to login if registration is successful
+      if (response.data.success) {
+        setTimeout(() => navigate("/login"), 2000);
+      }
     } catch (error) {
       console.error("Register failed", error.response?.data || error.message);
       setMsg(error.response?.data?.msg || "Register failed");
