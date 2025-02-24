@@ -122,6 +122,9 @@ const Register = () => {
           </button>
         </form>
         {msg && <p className="text-white mt-4 text-center">{msg}</p>}
+        <p>
+          Already have an account? <a href="/login">Login</a>
+        </p>
       </div>
     </div>
   );

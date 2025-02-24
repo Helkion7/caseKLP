@@ -85,6 +85,9 @@ const Login = () => {
           </button>
         </form>
         {msg && <p className="text-white mt-4 text-center">{msg}</p>}
+        <p>
+          Don't have an account? <a href="/register">Register</a>
+        </p>
       </div>
     </div>
   );
