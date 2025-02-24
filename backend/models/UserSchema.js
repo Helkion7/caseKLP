@@ -15,16 +15,8 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  accountNumber: {
-    type: String,
-    unique: true,
-    required: true,
-  },
-  iban: {
-    type: String,
-    unique: true,
-    required: true,
-  },
+  bankAccountNumber: { type: String },
+  iban: { type: String },
   balance: {
     type: Number,
     default: 0,
@@ -32,7 +24,6 @@ const UserSchema = new mongoose.Schema({
   accountType: {
     type: String,
     enum: ["checking", "savings"],
-    required: true,
   },
   transactions: [
     {

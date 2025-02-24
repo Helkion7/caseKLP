@@ -3,9 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const createJWT = require("../utils/createJWT");
 const createCookie = require("../utils/createCookie.js");
+const { generateNorwegianBankAccount } = require("../utils/bankAccountUtil.js");
 
-// Move environment variables to top for better visibility
-const saltRounds = parseInt(process.env.SALT); // Added fallback
+const saltRounds = parseInt(process.env.SALT);
 
 const authController = {
   login: async (req, res) => {
@@ -44,7 +44,6 @@ const authController = {
       }
 
       // Generate token and set cookie
-      const role = user.role || "user";
       const jwtToken = await createJWT(email, role);
       createCookie(res, jwtToken);
 
@@ -52,9 +51,9 @@ const authController = {
       const userResponse = user.toObject();
       delete userResponse.password;
 
-      return res.status(200).json({
-        msg: "Login successful",
-        user: userResponse,
+      return res.status(201).json({
+        msg: "Login successful. Redirecting to Account...",
+        success: true,
       });
     } catch (error) {
       console.error("Error in login:", error);
@@ -67,35 +66,30 @@ const authController = {
 
   register: async (req, res) => {
     try {
-      const { email, password, repeatPassword } = req.body;
-
+      const { name, email, password, repeatPassword } = req.body;
       console.log("REGISTER", req.body);
       if (!email || !password || !repeatPassword) {
         return res.status(400).json({
           msg: "All fields are required",
         });
       }
-
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return res.status(400).json({
           msg: "Invalid email format",
         });
       }
-
       if (password.length < 8) {
         return res.status(400).json({
           msg: "Password must be at least 8 characters long",
         });
       }
-
       // Password match validation
       if (password !== repeatPassword) {
         return res.status(400).json({
           msg: "Passwords do not match",
         });
       }
-
       // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
@@ -103,60 +97,37 @@ const authController = {
           msg: "Email already registered",
         });
       }
-
       // Hash password
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      // Create new user
+      // Generate bank account details
+      const bankAccount = generateNorwegianBankAccount();
+      // Create new user with bank account details
       const user = new User({
+        name,
         email,
         password: hashedPassword,
         role: "user",
+        bankAccountNumber: bankAccount.accountNumber,
+        iban: bankAccount.iban,
       });
 
-      // Save user
       await user.save();
 
-      // Generate token and set cookie
-      const jwtToken = await createJWT(email, "user");
-      await createCookie(res, jwtToken);
-
-      // Remove password from response
-      const userResponse = user.toObject();
-      delete userResponse.password;
-
+      // Send success response
       return res.status(201).json({
-        msg: "Registration successful",
-        user: userResponse,
+        msg: "Registration successful. Redirecting to login...",
+        success: true, // Add a success flag
       });
     } catch (error) {
       console.error("Error in register:", error);
-
       if (error.name === "ValidationError") {
         return res.status(400).json({
           msg: "Validation error",
           error: error.message,
         });
       }
-
       return res.status(500).json({
         msg: "Error during registration",
-        error: error.message,
-      });
-    }
-  },
-
-  // Optional: Add logout method
-  logout: async (req, res) => {
-    try {
-      res.clearCookie("jwt"); // Assuming 'jwt' is your cookie name
-      return res.status(200).json({
-        msg: "Logout successful",
-      });
-    } catch (error) {
-      console.error("Error in logout:", error);
-      return res.status(500).json({
-        msg: "Error during logout",
         error: error.message,
       });
     }
