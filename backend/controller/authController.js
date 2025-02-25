@@ -44,7 +44,7 @@ const authController = {
       }
 
       // Generate token and set cookie
-      const jwtToken = await createJWT(email, role);
+      const jwtToken = await createJWT(email, user.role);
       createCookie(res, jwtToken);
 
       // Remove password from response

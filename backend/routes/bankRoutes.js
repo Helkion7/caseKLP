@@ -1,8 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const bankController = require("../controller/bankController");
+const {
+  deposit,
+  withdraw,
+  getBalance,
+} = require("../controller/bankController");
 
-router.post("/deposit", bankController.deposit);
-router.post("/withdraw", bankController.withdraw);
+router.post("/deposit", deposit);
+router.post("/withdraw", withdraw);
+router.get("/balance", getBalance);
 
 module.exports = router;
