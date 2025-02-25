@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 
 // Import route modules
 const authRoutes = require("./routes/authRoutes");
@@ -12,6 +13,8 @@ const transactionRoutes = require("./routes/transactionRoutes");
 
 // Initialize Express app
 const app = express();
+
+app.use(helmet());
 
 /**
  * MongoDB Connection
