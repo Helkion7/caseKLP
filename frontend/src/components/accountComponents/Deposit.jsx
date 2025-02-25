@@ -33,7 +33,6 @@ const Deposit = () => {
         { withCredentials: true, timeout: 5000 }
       );
 
-      console.log("Deposit successful:", res.data);
       setMessage(`Innskudd vellykket! Ny saldo: ${res.data.newBalance} kr`);
       setShowSuccess(true);
       setAmount("");

@@ -44,7 +44,6 @@ const Withdraw = () => {
         { withCredentials: true, timeout: 5000 }
       );
 
-      console.log("Withdrawal successful:", res.data);
       setMessage(`Uttak vellykket! Ny saldo: ${res.data.newBalance} kr`);
       setShowSuccess(true);
       setAmount("");
