@@ -30,7 +30,6 @@ const TransactionSchema = new mongoose.Schema({
   },
 });
 
-// Add a text index for searching transaction descriptions
 TransactionSchema.index({ description: "text" });
 
 module.exports = mongoose.model("Transaction", TransactionSchema);

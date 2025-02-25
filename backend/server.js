@@ -3,6 +3,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 
 const authRoutes = require("./routes/authRoutes");
 const bankRoutes = require("./routes/bankRoutes");
@@ -21,13 +22,24 @@ let corsOptions = {
   credentials: true,
 };
 
-// Configure middleware FIRST
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    message: "Too many requests, please try again later.",
+  },
+});
+
+app.use(limiter);
+
 app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// THEN register route handlers
 app.use("/api/auth", authRoutes);
 app.use("/api/bank", bankRoutes);
 app.use("/api/transactions", transactionRoutes);

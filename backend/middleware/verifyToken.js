@@ -24,7 +24,7 @@ async function verifyJwt(req, res, next) {
           return res.status(404).send({ msg: "User not found" });
         }
         req.user.id = user._id;
-        next(); // Ensure next() is called after everything is done
+        next();
       } catch (error) {
         console.log(error);
         res.status(500).send({ msg: "Server error" });

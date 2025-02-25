@@ -5,9 +5,10 @@ const {
   withdraw,
   getBalance,
 } = require("../controller/bankController");
+const { apiLimiter, withdrawLimiter } = require("../middleware/rateLimiters");
 
-router.post("/deposit", deposit);
-router.post("/withdraw", withdraw);
-router.get("/balance", getBalance);
+router.post("/deposit", apiLimiter, deposit);
+router.post("/withdraw", withdrawLimiter, withdraw);
+router.get("/balance", apiLimiter, getBalance);
 
 module.exports = router;

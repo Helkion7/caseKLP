@@ -1,9 +1,7 @@
-// backend/controllers/transactionController.js
 const Transaction = require("../models/TransactionSchema");
 const User = require("../models/UserSchema");
 const jwt = require("jsonwebtoken");
 
-// Helper to get user from token
 const getUserFromToken = async (token) => {
   try {
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -24,7 +22,6 @@ const getUserFromToken = async (token) => {
   }
 };
 
-// Create a transaction record (internal use only)
 const createTransaction = async (
   userId,
   type,
@@ -43,7 +40,6 @@ const createTransaction = async (
 
     await transaction.save();
 
-    // Add transaction to user's transactions array
     await User.findByIdAndUpdate(userId, {
       $push: { transactions: transaction._id },
     });
@@ -55,7 +51,6 @@ const createTransaction = async (
   }
 };
 
-// Get all transactions for a user with pagination, sorting, and filtering
 const getTransactions = async (req, res) => {
   try {
     const token = req.cookies.jwt;
@@ -68,7 +63,6 @@ const getTransactions = async (req, res) => {
 
     const user = await getUserFromToken(token);
 
-    // Parse query parameters
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const sort = req.query.sort || "date";
@@ -76,28 +70,22 @@ const getTransactions = async (req, res) => {
     const type = req.query.type;
     const search = req.query.search;
 
-    // Build query
     const query = { user: user._id };
 
-    // Add filter by type if specified
     if (type && type !== "all") {
       query.type = type;
     }
 
-    // Add text search if specified
     if (search && search.trim() !== "") {
       query.$text = { $search: search };
     }
 
-    // Build sort object
     const sortObj = {};
     sortObj[sort] = order;
 
-    // Count total documents for pagination
     const totalTransactions = await Transaction.countDocuments(query);
     const totalPages = Math.ceil(totalTransactions / limit);
 
-    // Fetch transactions with pagination and sorting
     const transactions = await Transaction.find(query)
       .sort(sortObj)
       .skip((page - 1) * limit)
@@ -125,7 +113,6 @@ const getTransactions = async (req, res) => {
   }
 };
 
-// Get a single transaction by ID
 const getTransactionById = async (req, res) => {
   try {
     const token = req.cookies.jwt;

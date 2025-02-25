@@ -12,14 +12,12 @@ const authController = {
     try {
       const { email, password } = req.body;
 
-      // Input validation
       if (!email || !password) {
         return res.status(400).json({
           msg: "Email and password are required",
         });
       }
 
-      // Email format validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         return res.status(400).json({
@@ -27,15 +25,13 @@ const authController = {
         });
       }
 
-      // Find user and handle non-existent user
-      const user = await User.findOne({ email }).select("+password"); // Explicitly select password field if it's protected
+      const user = await User.findOne({ email }).select("+password");
       if (!user) {
         return res.status(401).json({
           msg: "Invalid credentials",
         });
       }
 
-      // Compare passwords
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({
@@ -43,11 +39,9 @@ const authController = {
         });
       }
 
-      // Generate token and set cookie
       const jwtToken = await createJWT(email, user.role);
       createCookie(res, jwtToken);
 
-      // Remove password from response
       const userResponse = user.toObject();
       delete userResponse.password;
 
@@ -84,24 +78,21 @@ const authController = {
           msg: "Password must be at least 8 characters long",
         });
       }
-      // Password match validation
       if (password !== repeatPassword) {
         return res.status(400).json({
           msg: "Passwords do not match",
         });
       }
-      // Check if user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         return res.status(409).json({
           msg: "Email already registered",
         });
       }
-      // Hash password
       const hashedPassword = await bcrypt.hash(password, saltRounds);
-      // Generate bank account details
+
       const bankAccount = generateNorwegianBankAccount();
-      // Create new user with bank account details
+
       const user = new User({
         name,
         email,
@@ -113,10 +104,9 @@ const authController = {
 
       await user.save();
 
-      // Send success response
       return res.status(201).json({
         msg: "Registration successful. Redirecting to login...",
-        success: true, // Add a success flag
+        success: true,
       });
     } catch (error) {
       console.error("Error in register:", error);

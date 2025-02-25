@@ -1,4 +1,3 @@
-// backend/controllers/bankController.js
 const User = require("../models/UserSchema");
 const jwt = require("jsonwebtoken");
 const { createTransaction } = require("./transactionController");
@@ -6,14 +5,12 @@ const { createTransaction } = require("./transactionController");
 const deposit = async (req, res) => {
   try {
     const { amount, description = "Innskudd" } = req.body;
-    // Validate amount
     if (!amount || amount <= 0) {
       return res
         .status(400)
         .json({ message: "Please provide a valid amount to deposit" });
     }
 
-    // Get user ID from JWT token in cookie
     const token = req.cookies.jwt;
 
     if (!token) {
@@ -22,7 +19,6 @@ const deposit = async (req, res) => {
         .json({ message: "Not authenticated. Please log in." });
     }
 
-    // Verify token - moved after the token existence check
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -39,17 +35,14 @@ const deposit = async (req, res) => {
       return res.status(401).json({ message: "Invalid authentication token" });
     }
 
-    // Find user by email from token
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Update user's balance
     const prevBalance = user.balance;
     user.balance += parseFloat(amount);
 
-    // Save transaction
     await createTransaction(
       user._id,
       "deposit",
@@ -58,10 +51,8 @@ const deposit = async (req, res) => {
       description
     );
 
-    // Save updated user
     await user.save();
 
-    // Return success response
     return res.status(200).json({
       message: "Deposit successful",
       newBalance: user.balance,
@@ -77,14 +68,12 @@ const deposit = async (req, res) => {
 const withdraw = async (req, res) => {
   try {
     const { amount, description = "Uttak" } = req.body;
-    // Validate amount
     if (!amount || amount <= 0) {
       return res
         .status(400)
         .json({ message: "Please provide a valid amount to withdraw" });
     }
 
-    // Get user ID from JWT token in cookie
     const token = req.cookies.jwt;
     if (!token) {
       return res
@@ -92,7 +81,6 @@ const withdraw = async (req, res) => {
         .json({ message: "Not authenticated. Please log in." });
     }
 
-    // Verify token
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -107,24 +95,20 @@ const withdraw = async (req, res) => {
       return res.status(401).json({ message: "Invalid authentication token" });
     }
 
-    // Find user by email from token
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check if user has sufficient balance
     if (user.balance < parseFloat(amount)) {
       return res
         .status(400)
         .json({ message: "Insufficient balance for withdrawal" });
     }
 
-    // Update user's balance
     const prevBalance = user.balance;
     user.balance -= parseFloat(amount);
 
-    // Save transaction
     await createTransaction(
       user._id,
       "withdrawal",
@@ -133,10 +117,8 @@ const withdraw = async (req, res) => {
       description
     );
 
-    // Save updated user
     await user.save();
 
-    // Return success response
     return res.status(200).json({
       message: "Withdrawal successful",
       newBalance: user.balance,
@@ -159,7 +141,6 @@ const getBalance = async (req, res) => {
         .json({ message: "Not authenticated. Please log in." });
     }
 
-    // Verify token
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.SECRET_KEY);
@@ -174,13 +155,11 @@ const getBalance = async (req, res) => {
       return res.status(401).json({ message: "Invalid authentication token" });
     }
 
-    // Find user by email from token
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Return user's balance
     return res.status(200).json({
       balance: user.balance,
       accountNumber: user.bankAccountNumber,

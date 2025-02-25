@@ -51,7 +51,6 @@ const Withdraw = () => {
       setDescription("");
       setShowConfirmation(false);
 
-      // After 3 seconds, reset success state
       setTimeout(() => {
         setShowSuccess(false);
       }, 3000);

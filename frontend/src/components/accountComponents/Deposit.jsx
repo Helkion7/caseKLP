@@ -24,7 +24,6 @@ const Deposit = () => {
         return;
       }
 
-      // The userId is retrieved from the JWT token on the server
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/bank/deposit`,
         {
@@ -40,19 +39,16 @@ const Deposit = () => {
       setAmount("");
       setDescription("");
 
-      // After 3 seconds, reset success state
       setTimeout(() => {
         setShowSuccess(false);
       }, 3000);
     } catch (err) {
       console.error("Error depositing funds:", err);
 
-      // Handle different error responses
       if (err.response?.status === 401) {
         setError(
           "Du må være innlogget for å sette inn penger. Vennligst logg inn."
         );
-        // Optional: Redirect to login page after a delay
         setTimeout(() => navigate("/login"), 3000);
       } else {
         setError(
