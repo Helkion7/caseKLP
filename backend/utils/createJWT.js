@@ -6,7 +6,6 @@ async function createJWT(email, role) {
     { email: email, role: "user" },
     process.env.SECRET_KEY
   );
-  console.log(jwtToken);
   return jwtToken;
 }
 

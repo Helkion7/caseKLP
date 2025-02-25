@@ -61,7 +61,6 @@ const authController = {
   register: async (req, res) => {
     try {
       const { name, email, password, repeatPassword } = req.body;
-      console.log("REGISTER", req.body);
       if (!email || !password || !repeatPassword) {
         return res.status(400).json({
           msg: "All fields are required",

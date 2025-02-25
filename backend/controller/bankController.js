@@ -22,7 +22,6 @@ const deposit = async (req, res) => {
     let decoded;
     try {
       decoded = jwt.verify(token, process.env.SECRET_KEY);
-      console.log("Decoded token:", decoded);
     } catch (tokenError) {
       console.error("Token verification error:", tokenError);
       return res
