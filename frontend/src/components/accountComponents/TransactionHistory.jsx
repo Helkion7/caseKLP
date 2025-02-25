@@ -11,10 +11,19 @@ import {
   AlertCircle,
 } from "lucide-react";
 
+/**
+ * TransactionHistory Component
+ *
+ * Displays a paginated, sortable, filterable table of user transactions.
+ * Includes search functionality and dynamic pagination controls.
+ */
 const TransactionHistory = () => {
+  // State for transaction data and loading status
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // State for pagination, sorting, filtering and search
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -23,15 +32,18 @@ const TransactionHistory = () => {
   const [filterType, setFilterType] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Fetch transactions whenever filter parameters change
   useEffect(() => {
     fetchTransactions();
   }, [currentPage, pageSize, sortField, sortDirection, filterType, searchTerm]);
 
+  // Function to fetch transactions from API
   const fetchTransactions = async () => {
     try {
       setLoading(true);
       setError("");
 
+      // Request transactions with current filter parameters
       const res = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/transactions`,
         {
@@ -48,6 +60,7 @@ const TransactionHistory = () => {
         }
       );
 
+      // Update state with response data
       setTransactions(res.data.transactions);
       setTotalPages(res.data.totalPages);
       setLoading(false);
@@ -61,6 +74,7 @@ const TransactionHistory = () => {
     }
   };
 
+  // Handle sorting when column header is clicked
   const handleSort = (field) => {
     if (field === sortField) {
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
@@ -71,21 +85,25 @@ const TransactionHistory = () => {
     setCurrentPage(1);
   };
 
+  // Handle transaction type filter change
   const handleFilterChange = (e) => {
     setFilterType(e.target.value);
     setCurrentPage(1);
   };
 
+  // Handle form submission for search
   const handleSearch = (e) => {
     e.preventDefault();
   };
 
+  // Handle pagination navigation
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
     }
   };
 
+  // Format date to Norwegian locale format
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("no-NO", {
@@ -97,6 +115,7 @@ const TransactionHistory = () => {
     });
   };
 
+  // Format currency amount to Norwegian format
   const formatAmount = (amount, type) => {
     return new Intl.NumberFormat("no-NO", {
       style: "currency",
@@ -107,7 +126,9 @@ const TransactionHistory = () => {
 
   return (
     <div className="w-full">
+      {/* Filter and search controls */}
       <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
+        {/* Transaction type filter */}
         <div className="flex items-center space-x-2">
           <Filter size={20} className="text-gray-500" />
           <select
@@ -121,6 +142,7 @@ const TransactionHistory = () => {
           </select>
         </div>
 
+        {/* Search form */}
         <form onSubmit={handleSearch} className="flex items-center space-x-2">
           <input
             type="text"
@@ -138,6 +160,7 @@ const TransactionHistory = () => {
         </form>
       </div>
 
+      {/* Content area - conditionally shows loader, error, empty state, or transactions */}
       {loading ? (
         <div className="flex justify-center items-center h-40">
           <Loader size={24} className="animate-spin text-red-600" />
@@ -153,10 +176,12 @@ const TransactionHistory = () => {
         </div>
       ) : (
         <>
+          {/* Transactions table */}
           <div className="overflow-x-auto rounded-lg border border-gray-200">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
+                  {/* Date column with sort capability */}
                   <th
                     className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("date")}
@@ -165,9 +190,11 @@ const TransactionHistory = () => {
                     {sortField === "date" &&
                       (sortDirection === "asc" ? "↑" : "↓")}
                   </th>
+                  {/* Type column */}
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Type
                   </th>
+                  {/* Description column with sort capability */}
                   <th
                     className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("description")}
@@ -176,6 +203,7 @@ const TransactionHistory = () => {
                     {sortField === "description" &&
                       (sortDirection === "asc" ? "↑" : "↓")}
                   </th>
+                  {/* Amount column with sort capability */}
                   <th
                     className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("amount")}
@@ -184,6 +212,7 @@ const TransactionHistory = () => {
                     {sortField === "amount" &&
                       (sortDirection === "asc" ? "↑" : "↓")}
                   </th>
+                  {/* Balance column with sort capability */}
                   <th
                     className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("balance")}
@@ -195,6 +224,7 @@ const TransactionHistory = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
+                {/* Transaction rows */}
                 {transactions.map((transaction) => (
                   <tr key={transaction._id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
@@ -233,8 +263,9 @@ const TransactionHistory = () => {
             </table>
           </div>
 
-          {/* Pagination */}
+          {/* Pagination controls */}
           <div className="flex justify-between items-center mt-4">
+            {/* Pagination info */}
             <div className="text-sm text-gray-500">
               Viser {(currentPage - 1) * pageSize + 1}-
               {Math.min(
@@ -243,7 +274,10 @@ const TransactionHistory = () => {
               )}{" "}
               av {totalPages * pageSize} transaksjoner
             </div>
+
+            {/* Page size selector and page navigation */}
             <div className="flex items-center space-x-2">
+              {/* Page size dropdown */}
               <select
                 value={pageSize}
                 onChange={(e) => {
@@ -257,6 +291,8 @@ const TransactionHistory = () => {
                 <option value={50}>50</option>
                 <option value={100}>100</option>
               </select>
+
+              {/* Previous page button */}
               <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
@@ -268,6 +304,8 @@ const TransactionHistory = () => {
               >
                 <ChevronLeft size={20} />
               </button>
+
+              {/* Page number buttons with intelligent display logic */}
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                 let pageNum;
                 if (totalPages <= 5) {
@@ -294,6 +332,8 @@ const TransactionHistory = () => {
                   </button>
                 );
               })}
+
+              {/* Next page button */}
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}

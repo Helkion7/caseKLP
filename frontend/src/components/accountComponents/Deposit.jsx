@@ -3,7 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { PlusCircle, CheckCircle, XCircle, Loader } from "lucide-react";
 
+/**
+ * Deposit Component
+ *
+ * Allows users to deposit funds to their account with an optional description.
+ * Includes form validation, API communication, and status feedback.
+ */
 const Deposit = () => {
+  // State management for form inputs and UI states
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
@@ -12,18 +19,25 @@ const Deposit = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
 
+  /**
+   * Handles the deposit form submission
+   * Validates inputs, communicates with API, and handles response
+   */
   const handleDeposit = async () => {
     try {
+      // Reset status messages and set loading state
       setError("");
       setMessage("");
       setLoading(true);
 
+      // Validate amount input
       if (!amount || amount <= 0) {
         setError("Vennligst oppgi et gyldig beløp");
         setLoading(false);
         return;
       }
 
+      // Send deposit request to API
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/bank/deposit`,
         {
@@ -33,23 +47,27 @@ const Deposit = () => {
         { withCredentials: true, timeout: 5000 }
       );
 
+      // Handle successful deposit
       setMessage(`Innskudd vellykket! Ny saldo: ${res.data.newBalance} kr`);
       setShowSuccess(true);
       setAmount("");
       setDescription("");
 
+      // Hide success message after delay
       setTimeout(() => {
         setShowSuccess(false);
       }, 3000);
     } catch (err) {
       console.error("Error depositing funds:", err);
 
+      // Handle authentication errors
       if (err.response?.status === 401) {
         setError(
           "Du må være innlogget for å sette inn penger. Vennligst logg inn."
         );
         setTimeout(() => navigate("/login"), 3000);
       } else {
+        // Handle other errors
         setError(
           err.response?.data?.message || "Feil ved innskudd. Prøv igjen senere."
         );
@@ -61,6 +79,7 @@ const Deposit = () => {
 
   return (
     <div className="bg-white">
+      {/* Success message notification */}
       {message && (
         <div
           className={`transition-opacity duration-300 ${
@@ -72,6 +91,7 @@ const Deposit = () => {
         </div>
       )}
 
+      {/* Error message notification */}
       {error && (
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flex items-center">
           <XCircle className="mr-2" size={20} />
@@ -80,6 +100,7 @@ const Deposit = () => {
       )}
 
       <div className="space-y-4">
+        {/* Amount input field */}
         <div>
           <label
             htmlFor="amount"
@@ -99,6 +120,7 @@ const Deposit = () => {
           />
         </div>
 
+        {/* Description input field */}
         <div>
           <label
             htmlFor="description"
@@ -117,6 +139,7 @@ const Deposit = () => {
           />
         </div>
 
+        {/* Deposit button with loading state */}
         <button
           onClick={handleDeposit}
           disabled={loading}
