@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Loader, AlertCircle } from "lucide-react";
 
 const GetBalance = () => {
   const [balance, setBalance] = useState(null);
@@ -42,35 +43,43 @@ const GetBalance = () => {
   }, [navigate]);
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Din kontoinformasjon</h2>
-
+    <div className="bg-white">
       {loading ? (
-        <p>Laster...</p>
+        <div className="flex justify-center items-center h-40">
+          <Loader size={24} className="animate-spin text-red-600" />
+        </div>
       ) : error ? (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4">
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flex items-center">
+          <AlertCircle className="mr-2" size={20} />
           {error}
         </div>
       ) : (
-        <div className="mb-4">
-          <p className="text-lg mb-2">
-            <strong>Saldo:</strong> {balance} kr
-          </p>
-          <p className="text-lg mb-2">
-            <strong>Kontonummer:</strong> {accountNumber}
-          </p>
-          <p className="text-lg">
-            <strong>IBAN:</strong> {iban}
-          </p>
+        <div className="space-y-4">
+          <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="text-lg mb-2">
+              <span className="font-medium text-gray-500">Saldo:</span>
+              <span className="ml-2 text-xl font-bold text-red-600">
+                {balance} kr
+              </span>
+            </div>
+            <div className="text-md mb-2">
+              <span className="font-medium text-gray-500">Kontonummer:</span>
+              <span className="ml-2">{accountNumber}</span>
+            </div>
+            <div className="text-md">
+              <span className="font-medium text-gray-500">IBAN:</span>
+              <span className="ml-2">{iban}</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => navigate("/")}
+            className="w-full bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition-colors"
+          >
+            Tilbake til hovedmenyen
+          </button>
         </div>
       )}
-
-      <button
-        onClick={() => navigate("/")}
-        className="w-full bg-gray-300 text-gray-700 p-2 rounded hover:bg-gray-400"
-      >
-        Tilbake til hovedmenyen
-      </button>
     </div>
   );
 };

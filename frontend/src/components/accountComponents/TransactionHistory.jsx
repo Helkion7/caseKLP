@@ -7,6 +7,8 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  Loader,
+  AlertCircle,
 } from "lucide-react";
 
 const TransactionHistory = () => {
@@ -76,7 +78,6 @@ const TransactionHistory = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Search is already triggered by the useEffect
   };
 
   const handlePageChange = (page) => {
@@ -105,17 +106,14 @@ const TransactionHistory = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 w-full max-w-4xl mx-auto mt-8">
-      <h2 className="text-2xl font-bold mb-6">Transaksjonshistorikk</h2>
-
-      {/* Filter and Search */}
-      <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
+    <div className="w-full">
+      <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
         <div className="flex items-center space-x-2">
           <Filter size={20} className="text-gray-500" />
           <select
             value={filterType}
             onChange={handleFilterChange}
-            className="p-2 border rounded-md text-gray-700"
+            className="p-2 border rounded-md text-gray-700 focus:ring-2 focus:ring-red-500 focus:border-red-500"
           >
             <option value="all">Alle transaksjoner</option>
             <option value="deposit">Innskudd</option>
@@ -129,49 +127,49 @@ const TransactionHistory = () => {
             placeholder="Søk beskrivelse..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="p-2 border rounded-md flex-grow"
+            className="p-2 border rounded-md flex-grow focus:ring-2 focus:ring-red-500 focus:border-red-500"
           />
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 rounded-md flex items-center justify-center"
+            className="bg-red-600 text-white p-2 rounded-md flex items-center justify-center hover:bg-red-700"
           >
             <Search size={20} />
           </button>
         </form>
       </div>
 
-      {/* Transaction Table */}
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <Loader size={24} className="animate-spin text-red-600" />
         </div>
       ) : error ? (
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4">
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 flex items-center">
+          <AlertCircle className="mr-2" size={20} />
           {error}
         </div>
       ) : transactions.length === 0 ? (
-        <div className="text-center py-10">
+        <div className="text-center py-8 bg-gray-50 rounded-lg">
           <p className="text-gray-500">Ingen transaksjoner funnet</p>
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto rounded-lg border border-gray-200">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("date")}
                   >
                     Dato{" "}
                     {sortField === "date" &&
                       (sortDirection === "asc" ? "↑" : "↓")}
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Type
                   </th>
                   <th
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("description")}
                   >
                     Beskrivelse{" "}
@@ -179,7 +177,7 @@ const TransactionHistory = () => {
                       (sortDirection === "asc" ? "↑" : "↓")}
                   </th>
                   <th
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("amount")}
                   >
                     Beløp{" "}
@@ -187,7 +185,7 @@ const TransactionHistory = () => {
                       (sortDirection === "asc" ? "↑" : "↓")}
                   </th>
                   <th
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                    className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                     onClick={() => handleSort("balance")}
                   >
                     Saldo{" "}
@@ -199,10 +197,10 @@ const TransactionHistory = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {transactions.map((transaction) => (
                   <tr key={transaction._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                       {formatDate(transaction.date)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
                       {transaction.type === "deposit" ? (
                         <span className="flex items-center text-green-600">
                           <ArrowDownLeft size={16} className="mr-1" /> Innskudd
@@ -213,11 +211,11 @@ const TransactionHistory = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                       {transaction.description}
                     </td>
                     <td
-                      className={`px-6 py-4 whitespace-nowrap text-sm text-right ${
+                      className={`px-4 py-3 whitespace-nowrap text-sm text-right ${
                         transaction.type === "deposit"
                           ? "text-green-600"
                           : "text-red-600"
@@ -226,7 +224,7 @@ const TransactionHistory = () => {
                       {transaction.type === "deposit" ? "+" : "-"}{" "}
                       {formatAmount(transaction.amount)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-right text-gray-900">
                       {formatAmount(transaction.balance)}
                     </td>
                   </tr>
@@ -236,7 +234,7 @@ const TransactionHistory = () => {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between items-center mt-6">
+          <div className="flex justify-between items-center mt-4">
             <div className="text-sm text-gray-500">
               Viser {(currentPage - 1) * pageSize + 1}-
               {Math.min(
@@ -252,7 +250,7 @@ const TransactionHistory = () => {
                   setPageSize(Number(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="border rounded-md p-1 text-sm"
+                className="border rounded-md p-1 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -271,7 +269,6 @@ const TransactionHistory = () => {
                 <ChevronLeft size={20} />
               </button>
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                // Calculate which 5 pages to show
                 let pageNum;
                 if (totalPages <= 5) {
                   pageNum = i + 1;
@@ -289,7 +286,7 @@ const TransactionHistory = () => {
                     onClick={() => handlePageChange(pageNum)}
                     className={`w-8 h-8 flex items-center justify-center rounded-md ${
                       currentPage === pageNum
-                        ? "bg-blue-500 text-white"
+                        ? "bg-red-600 text-white"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >

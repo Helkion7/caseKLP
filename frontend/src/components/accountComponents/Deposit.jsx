@@ -65,12 +65,7 @@ const Deposit = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 flex items-center">
-        <PlusCircle className="mr-2 text-green-500" size={24} />
-        Sett inn penger på kontoen
-      </h2>
-
+    <div className="bg-white">
       {message && (
         <div
           className={`transition-opacity duration-300 ${
@@ -103,7 +98,7 @@ const Deposit = () => {
             placeholder="0.00"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
             min="0"
             step="0.01"
           />
@@ -122,7 +117,7 @@ const Deposit = () => {
             placeholder="F.eks. Lønn, Overføring fra sparing"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
             maxLength={100}
           />
         </div>
@@ -130,7 +125,7 @@ const Deposit = () => {
         <button
           onClick={handleDeposit}
           disabled={loading}
-          className="w-full bg-blue-500 text-white p-2 rounded mb-2 hover:bg-blue-600 transition-colors flex items-center justify-center disabled:bg-blue-300"
+          className="w-full bg-red-600 text-white p-2 rounded mb-2 hover:bg-red-700 transition-colors flex items-center justify-center disabled:bg-red-300"
         >
           {loading ? (
             <>

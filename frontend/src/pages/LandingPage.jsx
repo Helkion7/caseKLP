@@ -5,63 +5,20 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div
-      className="landing-page"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        backgroundColor: "#ffffff",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <h1
-        style={{
-          color: "#333333",
-          fontSize: "2.5rem",
-          marginBottom: "1rem",
-        }}
-      >
-        Velkommen til vår Bank
-      </h1>
-      <p
-        style={{
-          color: "#666666",
-          fontSize: "1.1rem",
-          marginBottom: "2rem",
-          textAlign: "center",
-        }}
-      >
+    <div className="flex flex-col items-center justify-center h-screen bg-white font-sans">
+      <h1 className="text-gray-800 text-4xl mb-4">Velkommen til vår Bank</h1>
+      <p className="text-gray-600 text-lg mb-8 text-center">
         Logg inn eller opprett en ny konto for å komme i gang.
       </p>
       <button
         onClick={() => navigate("/login")}
-        style={{
-          backgroundColor: "#ff0000",
-          color: "#ffffff",
-          border: "none",
-          padding: "10px 20px",
-          fontSize: "1rem",
-          marginBottom: "1rem",
-          cursor: "pointer",
-          borderRadius: "4px",
-        }}
+        className="bg-red-600 text-white border-none px-5 py-2 text-lg mb-4 cursor-pointer rounded"
       >
         Logg inn
       </button>
       <button
         onClick={() => navigate("/register")}
-        style={{
-          backgroundColor: "#ff0000",
-          color: "#ffffff",
-          border: "none",
-          padding: "10px 20px",
-          fontSize: "1rem",
-          cursor: "pointer",
-          borderRadius: "4px",
-        }}
+        className="bg-red-600 text-white border-none px-5 py-2 text-lg cursor-pointer rounded"
       >
         Registrer bruker
       </button>
