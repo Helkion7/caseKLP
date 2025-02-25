@@ -25,19 +25,19 @@ function NavBar() {
             href="/about"
             className="text-gray-600 hover:text-gray-900 font-medium"
           >
-            About us
+            Om oss
           </a>
           <a
             href="/login"
             className="text-gray-600 hover:text-gray-900 font-medium"
           >
-            Login
+            Log inn
           </a>
           <a
             href="/register"
             className="text-gray-600 hover:text-gray-900 font-medium"
           >
-            Register
+            Registrer Bruker
           </a>
         </div>
       </div>

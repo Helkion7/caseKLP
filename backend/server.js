@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/authRoutes");
 const bankRoutes = require("./routes/bankRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 
 const app = express();
 
@@ -20,17 +21,21 @@ let corsOptions = {
   credentials: true,
 };
 
+// Configure middleware FIRST
 app.use(cors(corsOptions));
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+// THEN register route handlers
 app.use("/api/auth", authRoutes);
 app.use("/api/bank", bankRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 app.get("/", (req, res) => {
   res.send(`Server running on port ${process.env.PORT}`);
 });
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
+});

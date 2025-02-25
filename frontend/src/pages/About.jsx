@@ -3,16 +3,17 @@ import React from "react";
 function About() {
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>About KLP</h1>
+      <h1>Om oss</h1>
       <p>
-        KLP (Kommunal Landspensjonskasse) is a trusted Norwegian financial
-        institution dedicated to serving the public sector. We focus on
-        sustainable investments and innovative solutions to secure the financial
-        future of our members.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint ab ipsum,
+        iusto totam beatae, assumenda harum rerum architecto placeat quo quod et
+        at fugit quam doloremque commodi consectetur cumque laudantium.
       </p>
       <p>
-        With a commitment to transparency and social responsibility, our goal is
-        to make a positive impact in society while providing reliable services.
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Similique
+        consequatur perferendis consectetur debitis, dolor ipsam hic doloremque,
+        deserunt quam natus id explicabo vero dicta ratione? Dicta libero dolor
+        itaque voluptas.
       </p>
     </div>
   );

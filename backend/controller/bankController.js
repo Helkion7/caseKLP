@@ -1,10 +1,11 @@
 // backend/controllers/bankController.js
 const User = require("../models/UserSchema");
 const jwt = require("jsonwebtoken");
+const { createTransaction } = require("./transactionController");
 
 const deposit = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, description = "Innskudd" } = req.body;
     // Validate amount
     if (!amount || amount <= 0) {
       return res
@@ -45,7 +46,17 @@ const deposit = async (req, res) => {
     }
 
     // Update user's balance
+    const prevBalance = user.balance;
     user.balance += parseFloat(amount);
+
+    // Save transaction
+    await createTransaction(
+      user._id,
+      "deposit",
+      parseFloat(amount),
+      user.balance,
+      description
+    );
 
     // Save updated user
     await user.save();
@@ -65,7 +76,7 @@ const deposit = async (req, res) => {
 
 const withdraw = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const { amount, description = "Uttak" } = req.body;
     // Validate amount
     if (!amount || amount <= 0) {
       return res
@@ -110,7 +121,17 @@ const withdraw = async (req, res) => {
     }
 
     // Update user's balance
+    const prevBalance = user.balance;
     user.balance -= parseFloat(amount);
+
+    // Save transaction
+    await createTransaction(
+      user._id,
+      "withdrawal",
+      parseFloat(amount),
+      user.balance,
+      description
+    );
 
     // Save updated user
     await user.save();
