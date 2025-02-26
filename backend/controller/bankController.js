@@ -14,7 +14,7 @@ const deposit = async (req, res) => {
   try {
     // Extract and validate amount and description from request
     const { amount, description = "Innskudd" } = req.body;
-    if (!amount || amount <= 0) {
+    if (!amount || amount <= 0 || amount > 1000000) {
       return res
         .status(400)
         .json({ message: "Please provide a valid amount to deposit" });
@@ -93,7 +93,7 @@ const withdraw = async (req, res) => {
   try {
     // Extract and validate amount and description from request
     const { amount, description = "Uttak" } = req.body;
-    if (!amount || amount <= 0) {
+    if (!amount || amount <= 0 || amount > 1000000) {
       return res
         .status(400)
         .json({ message: "Please provide a valid amount to withdraw" });

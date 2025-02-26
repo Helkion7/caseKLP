@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, User, CreditCard } from "lucide-react";
 import axios from "axios";
 
 const Register = () => {
@@ -8,6 +8,7 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [bankAccountNumber, setBankAccountNumber] = useState("");
   const [msg, setMsg] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -18,7 +19,7 @@ const Register = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-        { name, email, password, repeatPassword },
+        { name, email, password, repeatPassword, bankAccountNumber },
         { withCredentials: true, timeout: 5000 }
       );
       setMsg(response.data.msg);
@@ -58,6 +59,21 @@ const Register = () => {
             required
             onChange={(e) => setEmail(e.target.value)}
             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 text-gray-800 focus:outline-none focus:border-red-600"
+          />
+        </div>
+        <div className="relative">
+          <CreditCard
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
+          <input
+            type="text"
+            placeholder="Kontonummer (11 siffer)"
+            onChange={(e) => setBankAccountNumber(e.target.value)}
+            className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 text-gray-800 focus:outline-none focus:border-red-600"
+            maxLength={11}
+            pattern="\d{11}"
+            title="Bank account number must be 11 digits"
           />
         </div>
         <div className="relative">

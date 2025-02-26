@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
   },
   accountType: {
     type: String,
-    enum: ["checking", "savings"],
+    enum: ["bsu", "sparekonto"],
   },
   transactions: [
     {
