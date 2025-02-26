@@ -217,4 +217,128 @@ const getBalance = async (req, res) => {
   }
 };
 
-module.exports = { deposit, withdraw, getBalance };
+/**
+ * 1. Validate transfer details (recipient, amount)
+ * 2. Authenticate user via JWT
+ * 3. Find sender and recipient users in database
+ * 4. Check if sender has sufficient balance
+ * 5. Update balances for both users
+ * 6. Create transaction records for both users
+ * 7. Return updated balance
+ */
+const transfer = async (req, res) => {
+  try {
+    // Extract and validate input parameters
+    const { recipientAccount, amount, description = "Overføring" } = req.body;
+
+    if (!recipientAccount) {
+      return res
+        .status(400)
+        .json({ message: "Mottakerens kontonummer må oppgis" });
+    }
+
+    if (!amount || amount <= 0) {
+      return res
+        .status(400)
+        .json({ message: "Vennligst oppgi et gyldig beløp" });
+    }
+
+    // Extract JWT token from cookies
+    const token = req.cookies.jwt;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ message: "Not authenticated. Please log in." });
+    }
+
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.SECRET_KEY);
+    } catch (tokenError) {
+      console.error("Token verification error:", tokenError);
+      return res
+        .status(401)
+        .json({ message: "Invalid or expired token. Please log in again." });
+    }
+
+    // Extract user email from token
+    const senderEmail = decoded.email;
+    if (!senderEmail) {
+      return res.status(401).json({ message: "Invalid authentication token" });
+    }
+
+    // Find sender user by email
+    const sender = await User.findOne({ email: senderEmail });
+    if (!sender) {
+      return res.status(404).json({ message: "Sender user not found" });
+    }
+
+    // Find recipient user by account number
+    const recipient = await User.findOne({
+      bankAccountNumber: recipientAccount,
+    });
+    if (!recipient) {
+      return res.status(404).json({
+        message: "Mottakeren ble ikke funnet. Sjekk kontonummeret.",
+      });
+    }
+
+    // Prevent transfers to self
+    if (sender._id.toString() === recipient._id.toString()) {
+      return res
+        .status(400)
+        .json({ message: "Du kan ikke overføre penger til din egen konto" });
+    }
+
+    // Check if sender has sufficient balance
+    if (sender.balance < parseFloat(amount)) {
+      return res
+        .status(400)
+        .json({ message: "Utilstrekkelig saldo for overføring" });
+    }
+
+    // Calculate new balances
+    const transferAmount = parseFloat(amount);
+    const senderPrevBalance = sender.balance;
+    const recipientPrevBalance = recipient.balance;
+
+    sender.balance -= transferAmount;
+    recipient.balance += transferAmount;
+
+    // Create transaction record for sender
+    await createTransaction(
+      sender._id,
+      "withdrawal",
+      transferAmount,
+      sender.balance,
+      `${description} til ${recipient.name}`
+    );
+
+    // Create transaction record for recipient
+    await createTransaction(
+      recipient._id,
+      "deposit",
+      transferAmount,
+      recipient.balance,
+      `${description} fra ${sender.name}`
+    );
+
+    // Save both users with updated balances
+    await sender.save();
+    await recipient.save();
+
+    return res.status(200).json({
+      message: "Overføring vellykket",
+      newBalance: sender.balance,
+    });
+  } catch (error) {
+    console.error("Error in transfer controller:", error);
+    return res.status(500).json({
+      message: "Server error during transfer",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { deposit, withdraw, getBalance, transfer };

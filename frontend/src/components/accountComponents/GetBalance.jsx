@@ -96,14 +96,6 @@ const GetBalance = () => {
               <span className="ml-2">{iban}</span>
             </div>
           </div>
-
-          {/* Back button */}
-          <button
-            onClick={() => navigate("/")}
-            className="w-full bg-gray-200 text-gray-700 p-2 rounded hover:bg-gray-300 transition-colors"
-          >
-            Tilbake til hovedmenyen
-          </button>
         </div>
       )}
     </div>
