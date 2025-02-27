@@ -1,4 +1,6 @@
-# Banking API Documentation
+Documentation
+
+npm start in root will start both frontend and backend
 
 ## Overview
 
