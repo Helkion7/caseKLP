@@ -2,14 +2,6 @@ const User = require("../models/UserSchema");
 const jwt = require("jsonwebtoken");
 const { createTransaction } = require("./transactionController");
 
-/**
- * 1. Validate deposit amount
- * 2. Authenticate user via JWT
- * 3. Find user in database
- * 4. Update user balance
- * 5. Create transaction record
- * 6. Return updated balance
- */
 const deposit = async (req, res) => {
   try {
     // Extract and validate amount and description from request
@@ -80,15 +72,6 @@ const deposit = async (req, res) => {
   }
 };
 
-/**
- * 1. Validate withdrawal amount
- * 2. Authenticate user via JWT
- * 3. Find user in database
- * 4. Check if sufficient balance exists
- * 5. Update user balance
- * 6. Create transaction record
- * 7. Return updated balance
- */
 const withdraw = async (req, res) => {
   try {
     // Extract and validate amount and description from request
@@ -165,11 +148,6 @@ const withdraw = async (req, res) => {
   }
 };
 
-/**
- * 1. Authenticate user via JWT
- * 2. Find user in database
- * 3. Return balance and account information
- */
 const getBalance = async (req, res) => {
   try {
     // Extract and verify JWT token
@@ -217,15 +195,6 @@ const getBalance = async (req, res) => {
   }
 };
 
-/**
- * 1. Validate transfer details (recipient, amount)
- * 2. Authenticate user via JWT
- * 3. Find sender and recipient users in database
- * 4. Check if sender has sufficient balance
- * 5. Update balances for both users
- * 6. Create transaction records for both users
- * 7. Return updated balance
- */
 const transfer = async (req, res) => {
   try {
     // Extract and validate input parameters

@@ -2,22 +2,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/UserSchema.js");
 require("dotenv").config();
 
-/**
- * Middleware to verify JWT authentication token
- *
- * Process:
- * 1. Extract JWT from cookies
- * 2. Verify token signature and expiration
- * 3. Extract user email from decoded token
- * 4. Find user in database to confirm existence
- * 5. Add user ID to request object for downstream handlers
- * 6. Pass control to the next middleware/route handler
- *
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- * @returns {void}
- */
 async function verifyJwt(req, res, next) {
   // Extract JWT from cookies
   const jsonwebtoken = req.cookies.jwt;

@@ -2,13 +2,6 @@ const Transaction = require("../models/TransactionSchema");
 const User = require("../models/UserSchema");
 const jwt = require("jsonwebtoken");
 
-/**
- * Helper function to extract and validate user from JWT token
- *
- * @param {string} token - JWT token from cookies
- * @returns {Object} - User document from database
- * @throws {Error} - If token is invalid or user not found
- */
 const getUserFromToken = async (token) => {
   try {
     // Verify the token and extract payload
@@ -31,16 +24,6 @@ const getUserFromToken = async (token) => {
   }
 };
 
-/**
- * Create a new transaction record and associate with user
- *
- * @param {string} userId - MongoDB ObjectId of user
- * @param {string} type - Transaction type ('deposit' or 'withdrawal')
- * @param {number} amount - Transaction amount
- * @param {number} balance - User's balance after transaction
- * @param {string} description - Optional transaction description
- * @returns {Object} - Created transaction document
- */
 const createTransaction = async (
   userId,
   type,
@@ -73,17 +56,6 @@ const createTransaction = async (
   }
 };
 
-/**
- * Get transactions for authenticated user with pagination and filtering
- *
- * Supported query parameters:
- * - page: Page number (default: 1)
- * - limit: Items per page (default: 10)
- * - sort: Field to sort by (default: 'date')
- * - order: Sort order ('asc' or 'desc', default: 'desc')
- * - type: Filter by transaction type
- * - search: Text search in transaction descriptions
- */
 const getTransactions = async (req, res) => {
   try {
     // Extract and verify JWT token

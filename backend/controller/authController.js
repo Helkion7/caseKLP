@@ -9,14 +9,6 @@ const { generateNorwegianBankAccount } = require("../utils/bankAccountUtil.js");
 const saltRounds = parseInt(process.env.SALT);
 
 const authController = {
-  /**
-   * 1. Validate email and password presence
-   * 2. Validate email format
-   * 3. Find user by email and check if exists
-   * 4. Compare passwords
-   * 5. Generate JWT token and set cookie
-   * 6. Send success response
-   */
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
@@ -74,16 +66,6 @@ const authController = {
     }
   },
 
-  /**
-   * 1. Validate all required fields
-   * 2. Validate email format
-   * 3. Check password requirements
-   * 4. Verify password matching
-   * 5. Check if email already exists
-   * 6. Hash password
-   * 7. Generate bank account details
-   * 8. Create and save new user
-   */
   register: async (req, res) => {
     try {
       const { name, email, password, repeatPassword } = req.body;

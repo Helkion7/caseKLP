@@ -7,7 +7,7 @@ function NavBar() {
       <div className="flex flex-col sm:flex-row items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-8">
           <a href="/" className="text-3xl font-bold text-gray-800">
-            <span className="font-serif">klp</span>
+            <span className="font-serif">bank</span>
           </a>
 
           <div className="flex items-center space-x-6">
